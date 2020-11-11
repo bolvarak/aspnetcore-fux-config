@@ -12,11 +12,11 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>Abstract;Library;Config;Configuration;Redis;Docker</PackageTags>
     <Product>Fux.Config .Net Library</Product>
-    <RepositoryUrl>https://github.com/bolvarak/aspnetcore-crux-config.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/bolvarak/aspnetcore-fux-config.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <RootNamespace>Fux.Config</RootNamespace>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
