@@ -1,13 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <AssemblyName>Fux.Config</AssemblyName>
     <Authors>bolvarak</Authors>
-    <Company></Company>
-    <Description>
-      This client library is just a collection of potentially useful things
-      relating to the configuration of things
+    <Company/>
+    <Description>&#xD;
+      This client library is just a collection of potentially useful things&#xD;
+      relating to the configuration of things&#xD;
     </Description>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Fux.Config</PackageId>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>Abstract;Library;Config;Configuration;Redis;Docker</PackageTags>
@@ -15,14 +15,13 @@
     <RepositoryUrl>https://github.com/bolvarak/aspnetcore-fux-config.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <RootNamespace>Fux.Config</RootNamespace>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>1.0.4</Version>
+    <TargetFramework>net5.0</TargetFramework>
+    <Version>1.0.6</Version>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>x64</PlatformTarget>
     <OutputPath>bin/Debug</OutputPath>
-    <DocumentationFile>bin/Debug/netcoreapp3.1/Fux.Config.xml</DocumentationFile>
+    <DocumentationFile>bin/Debug/net5.0/Fux.Config.xml</DocumentationFile>
     <NoWarn>1701;1702;1591</NoWarn>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <Optimize>True</Optimize>
@@ -30,16 +29,15 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <OutputPath>bin/Release</OutputPath>
     <PlatformTarget>x64</PlatformTarget>
-    <DocumentationFile>bin/Release/netcoreapp3.1/Fux.Config.xml</DocumentationFile>
+    <DocumentationFile>bin/Release/net5.0/Fux.Config.xml</DocumentationFile>
     <Optimize>True</Optimize>
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="StackExchange.Redis" Version="2.1.58" />
-    <PackageReference Include="Fux.Core" Version="1.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="5.0.0"/>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0"/>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3"/>
+    <PackageReference Include="StackExchange.Redis" Version="2.1.58"/>
+    <PackageReference Include="Fux.Core" Version="1.0.6"/>
   </ItemGroup>
-  
 </Project>
