@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Fux.Core.Extension.String;
 using StackExchange.Redis;
+using System;
 
 namespace Fux.Config.RedisHelper.Abstract
 {
@@ -237,6 +238,34 @@ namespace Fux.Config.RedisHelper.Abstract
         /// <typeparam name="TValue"></typeparam>
         /// <returns></returns>
         public Task<TValue> GetAsync<TValue>(bool allowEmpty = true);
+
+        /// <summary>
+        /// This method loads and populates an object from Redis using the <code>RedisKeyAttribute</code>
+        /// </summary>
+        /// <param name="objectType"></param>
+        /// <returns></returns>
+        public dynamic GetObject(Type objectType);
+
+        /// <summary>
+        /// This method loads and populates an object from Redis using the <code>RedisKeyAttribute</code>
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <returns></returns>
+        public TValue GetObject<TValue>();
+
+        /// <summary>
+        /// This method asynchronously loads and populates an object from Redis using the <code>RedisKeyAttribute</code>
+        /// </summary>
+        /// <param name="objectType"></param>
+        /// <returns></returns>
+        public Task<dynamic> GetObjectAsync(Type objectType);
+
+        /// <summary>
+        /// This method asynchronously loads and populates an object from Redis using the <code>RedisKeyAttribute</code>
+        /// </summary>
+        /// <typeparam name="TValue"></typeparam>
+        /// <returns></returns>
+        public Task<TValue> GetObjectAsync<TValue>();
 
         /// <summary>
         /// This method sets a value into Redis
