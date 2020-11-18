@@ -29,7 +29,7 @@ namespace Fux.Config.RedisHelper.Abstract
         /// This property contains the port number on which the Redis service listens
         /// </summary>
         public virtual int? Port { get; set; } = null;
-        
+
         /// <summary>
         /// This property contains the username for authenticating with the Redis service
         /// </summary>

@@ -4,21 +4,21 @@ using Fux.Config.RedisHelper.Abstract;
 namespace Fux.Config.RedisHelper
 {
     /// <summary>
-    /// This class maintains the 
-    /// </summary>
+    /// This class maintains the connection settings from an <code>IConfiguration</code> object
+    /// /// </summary>
     public class AppSettingsConnection : Connection
     {
         /// <summary>
         /// This property contains the configuration section name for the Redis configuration details
         /// </summary>
-        private static string _configurationSectionName = "Tux:Systems:Configuration:Redis";
+        private static string _configurationSectionName = "Fux:Redis";
 
         /// <summary>
         /// This method resets the configuration section name into memory
         /// </summary>
         /// <param name="configurationSectionName"></param>
         /// <returns></returns>
-        private static string SetConfigurationSectionName(string configurationSectionName) =>
+        public static string SetConfigurationSectionName(string configurationSectionName) =>
             _configurationSectionName = configurationSectionName;
 
         /// <summary>
@@ -44,10 +44,61 @@ namespace Fux.Config.RedisHelper
         /// This method instantiates the connection from the parsed appSettings.json file section
         /// </summary>
         /// <param name="appSettings"></param>
-        private AppSettingsConnection(ConnectionSettings appSettings) : base(appSettings.Host, appSettings.Port,
+        public AppSettingsConnection(ConnectionSettings appSettings) : base(appSettings.Host, appSettings.Port,
+            appSettings.Username, appSettings.Password) =>
+            WithAllowAdminFlag(appSettings.AllowAdmin)
+                .WithSocketFlag(appSettings.IsUnixSocket)
+                .WithSslFlag(appSettings.UseSsl);
+    }
+
+    /// <summary>
+    /// This class maintains the connection settings from an <code>IConfiguration</code> object
+    /// with a generic settings class provider
+    /// </summary>
+    /// <typeparam name="TSettings"></typeparam>
+    public class AppSettingsConnection<TSettings> : Connection where TSettings : ConnectionSettings
+    {
+        /// <summary>
+        /// This property contains the configuration section name for the Redis configuration details
+        /// </summary>
+        private static string _configurationSectionName = "Tux:Systems:Configuration:Redis";
+
+        /// <summary>
+        /// This method resets the configuration section name into memory
+        /// </summary>
+        /// <param name="configurationSectionName"></param>
+        /// <returns></returns>
+        private static string SetConfigurationSectionName(string configurationSectionName) =>
+            _configurationSectionName = configurationSectionName;
+
+        /// <summary>
+        /// This method instantiates the connection settings from the appSettings.json file section
+        /// </summary>
+        /// <param name="configuration"></param>
+        public AppSettingsConnection(IConfiguration configuration) : base()
+        {
+            // Localize the configuration section
+            TSettings appSettings =
+                configuration.GetSection(_configurationSectionName).Get<TSettings>();
+            // Setup the instance
+            WithAllowAdminFlag(appSettings.AllowAdmin)
+                .WithHost(appSettings.Host)
+                .WithPort(appSettings.Port)
+                .WithPassword(appSettings.Password)
+                .WithSerializerSettings()
+                .WithSocketFlag(appSettings.IsUnixSocket)
+                .WithSslFlag(appSettings.UseSsl);
+        }
+
+        /// <summary>
+        /// This method instantiates the connection from the parsed appSettings.json file section
+        /// </summary>
+        /// <param name="appSettings"></param>
+        public AppSettingsConnection(TSettings appSettings) : base(appSettings.Host, appSettings.Port,
             appSettings.Username, appSettings.Password) =>
             WithAllowAdminFlag(appSettings.AllowAdmin)
                 .WithSocketFlag(appSettings.IsUnixSocket)
                 .WithSslFlag(appSettings.UseSsl);
     }
 }
+

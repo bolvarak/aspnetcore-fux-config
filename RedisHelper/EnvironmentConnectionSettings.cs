@@ -38,13 +38,13 @@ namespace Fux.Config.RedisHelper
         /// <summary>
         /// This property contains the username for authenticating with the Redis service
         /// </summary>
-        [EnvironmentVariable("FUX_USERNAME")]
+        [EnvironmentVariable("FUX_REDIS_USERNAME")]
         public override string Username { get; set; }
 
         /// <summary>
         /// This property contains the SSL flag for connecting to the Redis service
         /// </summary>
-        [EnvironmentVariable("FUX_USE_SSL")]
+        [EnvironmentVariable("FUX_REDIS_USE_SSL")]
         public override bool UseSsl { get; set; } = false;
     }
 }

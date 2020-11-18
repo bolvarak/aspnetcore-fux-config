@@ -15,7 +15,7 @@ namespace Fux.Config.RedisHelper.Abstract
         /// </summary>
         [JsonProperty("allowAdmin")]
         public bool AllowAdmin { get; set; }
-        
+
         /// <summary>
         /// This property contains the hostname on which the Redis service is listening
         /// </summary>
@@ -41,7 +41,7 @@ namespace Fux.Config.RedisHelper.Abstract
         public int? Port { get; set; }
 
         /// <summary>
-        /// This property contains 
+        /// This property contains
         /// </summary>
         [JsonProperty("username")]
         public string Username { get; set; }
@@ -100,7 +100,7 @@ namespace Fux.Config.RedisHelper.Abstract
         /// <param name="allowEmpty"></param>
         /// <returns></returns>
         /// <exception cref="System.Exception"></exception>
-        public string Get(RedisKey redisKey, bool allowEmpty);
+        public string Get(RedisKey redisKey, bool allowEmpty = true);
 
         /// <summary>
         /// This method returns a typed value from Redis as <typeparamref name="TValue"/> and will throw
@@ -110,7 +110,7 @@ namespace Fux.Config.RedisHelper.Abstract
         /// <param name="allowEmpty"></param>
         /// <typeparam name="TValue"></typeparam>
         /// <returns></returns>
-        public TValue Get<TValue>(RedisKey redisKey, bool allowEmpty);
+        public TValue Get<TValue>(RedisKey redisKey, bool allowEmpty = true);
 
         /// <summary>
         /// This method returns a value from Redis and will throw an exception
@@ -119,9 +119,9 @@ namespace Fux.Config.RedisHelper.Abstract
         /// <param name="redisKey"></param>
         /// <param name="allowEmpty"></param>
         /// <returns></returns>
-        public string Get(string redisKey, bool allowEmpty) =>
+        public string Get(string redisKey, bool allowEmpty = true) =>
             Get(new RedisKey(redisKey), allowEmpty);
-        
+
         /// <summary>
         /// This method returns a value from Redis
         /// </summary>
@@ -157,6 +157,15 @@ namespace Fux.Config.RedisHelper.Abstract
             Get<TValue>(new RedisKey(redisKey));
 
         /// <summary>
+        /// This method loads a POCO from Redis stored as a JSON string using a
+        /// <code>RedisKey</code> attribute at the class level
+        /// </summary>
+        /// <param name="allowEmpty"></param>
+        /// <typeparam name="TValue"></typeparam>
+        /// <returns></returns>
+        public TValue Get<TValue>(bool allowEmpty = true);
+
+        /// <summary>
         /// This method asynchronously returns a value from Redis and will throw an exception
         /// if the value is empty and <paramref name="allowEmpty"/> is <code>false</code>
         /// </summary>
@@ -164,7 +173,7 @@ namespace Fux.Config.RedisHelper.Abstract
         /// <param name="allowEmpty"></param>
         /// <returns></returns>
         /// <exception cref="System.Exception"></exception>
-        public Task<string> GetAsync(RedisKey redisKey, bool allowEmpty);
+        public Task<string> GetAsync(RedisKey redisKey, bool allowEmpty = true);
 
         /// <summary>
         /// This method asynchronously returns a typed value from Redis as <typeparamref name="TValue"/> and will throw
@@ -174,7 +183,7 @@ namespace Fux.Config.RedisHelper.Abstract
         /// <param name="allowEmpty"></param>
         /// <typeparam name="TValue"></typeparam>
         /// <returns></returns>
-        public Task<TValue> GetAsync<TValue>(RedisKey redisKey, bool allowEmpty);
+        public Task<TValue> GetAsync<TValue>(RedisKey redisKey, bool allowEmpty = true);
 
         /// <summary>
         /// This method asynchronously returns a value from Redis and will throw an exception
@@ -183,9 +192,9 @@ namespace Fux.Config.RedisHelper.Abstract
         /// <param name="redisKey"></param>
         /// <param name="allowEmpty"></param>
         /// <returns></returns>
-        public Task<string> GetAsync(string redisKey, bool allowEmpty) =>
+        public Task<string> GetAsync(string redisKey, bool allowEmpty = true) =>
             GetAsync(new RedisKey(redisKey), allowEmpty);
-        
+
         /// <summary>
         /// This method asynchronously returns a value from Redis
         /// </summary>
@@ -219,6 +228,15 @@ namespace Fux.Config.RedisHelper.Abstract
         /// <returns></returns>
         public Task<TValue> GetAsync<TValue>(string redisKey) =>
             GetAsync<TValue>(new RedisKey(redisKey), true);
+
+        /// <summary>
+        /// This method asynchronously loads a POCO from Redis stored as a JSON string using a
+        /// <code>RedisKey</code> attribute at the class level
+        /// </summary>
+        /// <param name="allowEmpty"></param>
+        /// <typeparam name="TValue"></typeparam>
+        /// <returns></returns>
+        public Task<TValue> GetAsync<TValue>(bool allowEmpty = true);
 
         /// <summary>
         /// This method sets a value into Redis
@@ -257,6 +275,15 @@ namespace Fux.Config.RedisHelper.Abstract
             Set<TValue>(new RedisKey(redisKey), redisValue);
 
         /// <summary>
+        /// This method asynchronously saves a POCO to Redis stored as a JSON string using a
+        /// <code>RedisKey</code> attribute at the class level
+        /// </summary>
+        /// <param name="redisValue"></param>
+        /// <typeparam name="TValue"></typeparam>
+        /// <returns></returns>
+        public IConnection Set<TValue>(TValue redisValue);
+
+        /// <summary>
         /// This method asynchronously sets a value into Redis
         /// </summary>
         /// <param name="redisKey"></param>
@@ -291,6 +318,28 @@ namespace Fux.Config.RedisHelper.Abstract
         /// <returns></returns>
         public Task<IConnection> SetAsync<TValue>(string redisKey, TValue redisValue) =>
             SetAsync(new RedisKey(redisKey), redisValue);
+
+        /// <summary>
+        /// This method asynchronously saves a POCO to Redis stored as a JSON string using a
+        /// <code>RedisKey</code> attribute at the class level
+        /// </summary>
+        /// <param name="redisValue"></param>
+        /// <typeparam name="TValue"></typeparam>
+        /// <returns></returns>
+        public Task<IConnection> SetAsync<TValue>(TValue redisValue);
+
+        /// <summary>
+        /// This method forces any generic inheritors to a generic Connection type
+        /// </summary>
+        /// <returns></returns>
+        public IConnection ToConnection();
+
+        /// <summary>
+        /// This method forces any generic inheritors to a hard Connection type
+        /// </summary>
+        /// <typeparam name="TConnection"></typeparam>
+        /// <returns></returns>
+        public TConnection ToConnection<TConnection>() where TConnection : Connection;
 
         /// <summary>
         /// This method resets the allow admin flag into the instance
@@ -333,7 +382,7 @@ namespace Fux.Config.RedisHelper.Abstract
         /// <param name="port"></param>
         /// <returns></returns>
         public IConnection WithPort(int? port);
-        
+
         /// <summary>
         /// This method fluidly resets the port on which the Redis service is listening
         /// </summary>

@@ -67,7 +67,7 @@ namespace Fux.Config.RedisHelper.Abstract
         public int? Port { get; set; } = 6379;
 
         /// <summary>
-        /// This property contains 
+        /// This property contains
         /// </summary>
         [JsonProperty("username")]
         public string Username { get; set; } = Environment.GetEnvironmentVariable("TUX_REDIS_USERNAME");
@@ -110,7 +110,7 @@ namespace Fux.Config.RedisHelper.Abstract
         /// <param name="password"></param>
         public Connection(string host, int? port, string username, string password) =>
             WithSerializerSettings().WithHost(host).WithPort(port).WithUsername(username).WithPassword(password);
-        
+
         /// <summary>
         /// This method instantiates a connection with all of the values necessary to connect to Redis
         /// </summary>
@@ -147,7 +147,7 @@ namespace Fux.Config.RedisHelper.Abstract
             // Instantiate our connection
             _connection = await ConnectionMultiplexer.ConnectAsync(configurationOptions);
         }
-        
+
         /// <summary>
         /// This method generates a ConfigurationOptions object from the instance
         /// </summary>
@@ -218,7 +218,7 @@ namespace Fux.Config.RedisHelper.Abstract
         /// <returns></returns>
         public virtual Task<IDatabase> DatabaseAsync() =>
             DatabaseAsync(DatabaseIndex);
-        
+
         /// <summary>
         /// This method returns a value from Redis and will throw an exception
         /// if the value is empty and <paramref name="allowEmpty"/> is <code>false</code>
@@ -227,7 +227,7 @@ namespace Fux.Config.RedisHelper.Abstract
         /// <param name="allowEmpty"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public virtual string Get(RedisKey redisKey, bool allowEmpty)
+        public virtual string Get(RedisKey redisKey, bool allowEmpty = true)
         {
             // Localize the value
             RedisValue redisValue = Database().StringGet(redisKey);
@@ -246,7 +246,7 @@ namespace Fux.Config.RedisHelper.Abstract
         /// <param name="allowEmpty"></param>
         /// <typeparam name="TValue"></typeparam>
         /// <returns></returns>
-        public virtual TValue Get<TValue>(RedisKey redisKey, bool allowEmpty)
+        public virtual TValue Get<TValue>(RedisKey redisKey, bool allowEmpty = true)
         {
             // Localize the value
             string redisValue = Get(redisKey, allowEmpty);
@@ -259,8 +259,45 @@ namespace Fux.Config.RedisHelper.Abstract
             catch (JsonSerializationException)
             {
                 // Return the converted type
-                return (TValue) Convert.ChangeType(redisValue, typeof(TValue));
+                return (TValue)Convert.ChangeType(redisValue, typeof(TValue));
             }
+        }
+
+        /// <summary>
+        /// This method loads a POCO from Redis stored as a JSON string using a
+        /// <code>RedisKey</code> attribute at the class level
+        /// </summary>
+        /// <param name="allowEmpty"></param>
+        /// <typeparam name="TValue"></typeparam>
+        /// <returns></returns>
+        public virtual TValue Get<TValue>(bool allowEmpty = true)
+        {
+            // Define our previous database index
+            int? previousDatabase = null;
+            // Load the value's type
+            Type type = typeof(TValue);
+            // Localize the database attribute
+            RedisDatabaseAttribute databaseAttribute =
+                (type.GetCustomAttributes(typeof(RedisDatabaseAttribute), false).FirstOrDefault() as RedisDatabaseAttribute);
+            // Localize the key attribute
+            RedisKeyAttribute keyAttribute =
+                (type.GetCustomAttributes(typeof(RedisKey), false).FirstOrDefault() as RedisKeyAttribute);
+            // Check for a database attribute
+            if (databaseAttribute != null && databaseAttribute.Database >= 0)
+            {
+                // Set the previous database
+                previousDatabase = DatabaseIndex;
+                // Set the database index into the instance
+                DatabaseIndex = databaseAttribute.Database;
+            }
+            // Make sure we have a key attribute
+            if (keyAttribute == null) throw new System.Exception($"{typeof(TValue).FullName} Does Not Contain a RedisKey Attribute");
+            // Load the value from Redis
+            TValue value = Get<TValue>(keyAttribute.Name, allowEmpty);
+            // Check to see if we stored the previous database and reset it into the instance
+            if (previousDatabase.HasValue) DatabaseIndex = previousDatabase.Value;
+            // We're done, return the value
+            return value;
         }
 
         /// <summary>
@@ -271,7 +308,7 @@ namespace Fux.Config.RedisHelper.Abstract
         /// <param name="allowEmpty"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public virtual async Task<string> GetAsync(RedisKey redisKey, bool allowEmpty)
+        public virtual async Task<string> GetAsync(RedisKey redisKey, bool allowEmpty = true)
         {
             // Localize our database
             IDatabase database = await DatabaseAsync();
@@ -292,7 +329,7 @@ namespace Fux.Config.RedisHelper.Abstract
         /// <param name="allowEmpty"></param>
         /// <typeparam name="TValue"></typeparam>
         /// <returns></returns>
-        public virtual async Task<TValue> GetAsync<TValue>(RedisKey redisKey, bool allowEmpty)
+        public virtual async Task<TValue> GetAsync<TValue>(RedisKey redisKey, bool allowEmpty = true)
         {
             // Localize the value
             string redisValue = await GetAsync(redisKey, allowEmpty);
@@ -305,8 +342,45 @@ namespace Fux.Config.RedisHelper.Abstract
             catch (JsonSerializationException)
             {
                 // Return the converted type
-                return (TValue) Convert.ChangeType(redisValue, typeof(TValue));
+                return (TValue)Convert.ChangeType(redisValue, typeof(TValue));
             }
+        }
+
+        /// <summary>
+        /// This method asynchronously loads a POCO from Redis stored as a JSON string using a
+        /// <code>RedisKey</code> attribute at the class level
+        /// </summary>
+        /// <param name="allowEmpty"></param>
+        /// <typeparam name="TValue"></typeparam>
+        /// <returns></returns>
+        public virtual async Task<TValue> GetAsync<TValue>(bool allowEmpty = true)
+        {
+            // Define our previous database index
+            int? previousDatabase = null;
+            // Load the value's type
+            Type type = typeof(TValue);
+            // Localize the database attribute
+            RedisDatabaseAttribute databaseAttribute =
+                (type.GetCustomAttributes(typeof(RedisDatabaseAttribute), false).FirstOrDefault() as RedisDatabaseAttribute);
+            // Localize the key attribute
+            RedisKeyAttribute keyAttribute =
+                (type.GetCustomAttributes(typeof(RedisKey), false).FirstOrDefault() as RedisKeyAttribute);
+            // Check for a database attribute
+            if (databaseAttribute != null && databaseAttribute.Database >= 0)
+            {
+                // Set the previous database
+                previousDatabase = DatabaseIndex;
+                // Set the database index into the instance
+                DatabaseIndex = databaseAttribute.Database;
+            }
+            // Make sure we have a key attribute
+            if (keyAttribute == null) throw new System.Exception($"{typeof(TValue).FullName} Does Not Contain a RedisKey Attribute");
+            // Load the value from Redis
+            TValue value = await GetAsync<TValue>(keyAttribute.Name, keyAttribute.AllowEmpty);
+            // Check to see if we stored the previous database and reset it into the instance
+            if (previousDatabase.HasValue) DatabaseIndex = previousDatabase.Value;
+            // We're done, return the value
+            return value;
         }
 
         /// <summary>
@@ -317,7 +391,7 @@ namespace Fux.Config.RedisHelper.Abstract
         /// <exception cref="Exception"></exception>
         public virtual dynamic GetObject(Type objectType) =>
             Core.Convert.MapWithValueGetter(objectType,
-                attribute => Get(new RedisKey(((RedisKeyAttribute) attribute).Name), true), typeof(RedisKeyAttribute));
+                attribute => Get(new RedisKey(((RedisKeyAttribute)attribute).Name), ((RedisKeyAttribute)attribute).AllowEmpty), typeof(RedisKeyAttribute));
 
         /// <summary>
         /// This method loads and populates an object from Redis using the <code>RedisKeyAttribute</code>
@@ -326,7 +400,7 @@ namespace Fux.Config.RedisHelper.Abstract
         /// <returns></returns>
         public virtual TValue GetObject<TValue>() =>
             Core.Convert.MapWithValueGetter<TValue, dynamic, RedisKeyAttribute>(attribute =>
-                Get<dynamic>(attribute.Name, true));
+                Get<dynamic>(attribute.Name, attribute.AllowEmpty));
 
         /// <summary>
         /// This method asynchronously loads and populates an object from Redis using the <code>RedisKeyAttribute</code>
@@ -336,7 +410,7 @@ namespace Fux.Config.RedisHelper.Abstract
         /// <exception cref="Exception"></exception>
         public virtual Task<dynamic> GetObjectAsync(Type objectType) =>
             Core.Convert.MapWithValueGetter<dynamic, dynamic, RedisKeyAttribute>(
-                attribute => Get<dynamic>(attribute.Name, true));
+                attribute => Get<dynamic>(attribute.Name, attribute.AllowEmpty));
 
         /// <summary>
         /// This method asynchronously loads and populates an object from Redis using the <code>RedisKeyAttribute</code>
@@ -345,7 +419,7 @@ namespace Fux.Config.RedisHelper.Abstract
         /// <returns></returns>
         public virtual Task<TValue> GetObjectAsync<TValue>() =>
             Core.Convert.MapWithValueGetterAsync<TValue, dynamic, RedisKeyAttribute>(attribute =>
-                GetAsync<dynamic>(attribute.Name, true));
+                GetAsync<dynamic>(attribute.Name, attribute.AllowEmpty));
 
         /// <summary>
         /// This method sets a value into Redis
@@ -377,6 +451,43 @@ namespace Fux.Config.RedisHelper.Abstract
                 value = JsonConvert.SerializeObject(value, _jsonSerializerSettings);
             // We're done, set the value into Redis
             return Set(redisKey, new RedisValue(value));
+        }
+
+        /// <summary>
+        /// This method saves a POCO to Redis stored as a JSON string using a
+        /// <code>RedisKey</code> attribute at the class level
+        /// </summary>
+        /// <param name="redisValue"></param>
+        /// <typeparam name="TValue"></typeparam>
+        /// <returns></returns>
+        public virtual IConnection Set<TValue>(TValue redisValue)
+        {
+            // Define our previous database index
+            int? previousDatabase = null;
+            // Load the value's type
+            Type type = typeof(TValue);
+            // Localize the database attribute
+            RedisDatabaseAttribute databaseAttribute =
+                (type.GetCustomAttributes(typeof(RedisDatabaseAttribute), false).FirstOrDefault() as RedisDatabaseAttribute);
+            // Localize the key attribute
+            RedisKeyAttribute keyAttribute =
+                (type.GetCustomAttributes(typeof(RedisKey), false).FirstOrDefault() as RedisKeyAttribute);
+            // Check for a database attribute
+            if (databaseAttribute != null && databaseAttribute.Database >= 0)
+            {
+                // Set the previous database
+                previousDatabase = DatabaseIndex;
+                // Set the database index into the instance
+                DatabaseIndex = databaseAttribute.Database;
+            }
+            // Make sure we have a key attribute
+            if (keyAttribute == null) throw new System.Exception($"{typeof(TValue).FullName} Does Not Contain a RedisKey Attribute");
+            // Set the value into redis
+            Set<TValue>(keyAttribute.Name, redisValue);
+            // Check to see if we stored the previous database and reset it into the instance
+            if (previousDatabase.HasValue) DatabaseIndex = previousDatabase.Value;
+            // We're done, return the instance
+            return this;
         }
 
         /// <summary>
@@ -416,6 +527,58 @@ namespace Fux.Config.RedisHelper.Abstract
         }
 
         /// <summary>
+        /// This method asynchronously saves a POCO to Redis stored as a JSON string using a
+        /// <code>RedisKey</code> attribute at the class level
+        /// </summary>
+        /// <param name="redisValue"></param>
+        /// <typeparam name="TValue"></typeparam>
+        /// <returns></returns>
+        public virtual async Task<IConnection> SetAsync<TValue>(TValue redisValue)
+        {
+            // Define our previous database index
+            int? previousDatabase = null;
+            // Load the value's type
+            Type type = typeof(TValue);
+            // Localize the database attribute
+            RedisDatabaseAttribute databaseAttribute =
+                (type.GetCustomAttributes(typeof(RedisDatabaseAttribute), false).FirstOrDefault() as RedisDatabaseAttribute);
+            // Localize the key attribute
+            RedisKeyAttribute keyAttribute =
+                (type.GetCustomAttributes(typeof(RedisKey), false).FirstOrDefault() as RedisKeyAttribute);
+            // Check for a database attribute
+            if (databaseAttribute != null && databaseAttribute.Database >= 0)
+            {
+                // Set the previous database
+                previousDatabase = DatabaseIndex;
+                // Set the database index into the instance
+                DatabaseIndex = databaseAttribute.Database;
+            }
+            // Make sure we have a key attribute
+            if (keyAttribute == null) throw new System.Exception($"{typeof(TValue).FullName} Does Not Contain a RedisKey Attribute");
+            // Set the value into redis
+            await SetAsync<TValue>(keyAttribute.Name, redisValue);
+            // Check to see if we stored the previous database and reset it into the instance
+            if (previousDatabase.HasValue) DatabaseIndex = previousDatabase.Value;
+            // We're done, return the instance
+            return this;
+        }
+
+        /// <summary>
+        /// This method forces any generic inheritors to a generic Connection type
+        /// </summary>
+        /// <returns></returns>
+        public IConnection ToConnection() =>
+            (this as Connection);
+
+        /// <summary>
+        /// This method forces any generic inheritors to a hard Connection type
+        /// </summary>
+        /// <typeparam name="TConnection"></typeparam>
+        /// <returns></returns>
+        public TConnection ToConnection<TConnection>() where TConnection : Connection =>
+            (this as TConnection);
+
+        /// <summary>
         /// This method resets the allow admin flag into the instance
         /// </summary>
         /// <param name="flag"></param>
@@ -427,7 +590,7 @@ namespace Fux.Config.RedisHelper.Abstract
             // We're done, return the instance
             return this;
         }
-        
+
         /// <summary>
         /// This method resets the database index into the instance
         /// </summary>
