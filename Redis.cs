@@ -31,16 +31,18 @@ namespace Fux.Config
         /// </summary>
         /// <typeparam name="TDockerSettings"></typeparam>
         /// <returns></returns>
-        public static DockerConnection ConnectFromDocker<TDockerSettings>() where TDockerSettings : DockerConnectionSettings =>
-            new DockerConnection<TDockerSettings>().ToConnection<DockerConnection>();
+        public static DockerConnection<TDockerSettings> ConnectFromDocker<TDockerSettings>()
+            where TDockerSettings : DockerConnectionSettings =>
+                Singleton<DockerConnection<TDockerSettings>>.Instance();
 
         /// <summary>
         /// This method sets up a Redis connection from Environment Variables using only the configuration POCO
         /// </summary>
         /// <typeparam name="TEnvironmentSettings"></typeparam>
         /// <returns></returns>
-        public static EnvironmentConnection ConnectFromEnvironment<TEnvironmentSettings>() where TEnvironmentSettings : EnvironmentConnectionSettings =>
-            new EnvironmentConnection<TEnvironmentSettings>().ToConnection<EnvironmentConnection>();
+        public static EnvironmentConnection<TEnvironmentSettings> ConnectFromEnvironment<TEnvironmentSettings>()
+            where TEnvironmentSettings : EnvironmentConnectionSettings =>
+                Singleton<EnvironmentConnection<TEnvironmentSettings>>.Instance();
 
         /// <summary>
         /// This method sets up a Redis connection from Docker Secrets
