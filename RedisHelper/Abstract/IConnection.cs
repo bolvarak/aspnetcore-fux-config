@@ -358,19 +358,6 @@ namespace Fux.Config.RedisHelper.Abstract
         public Task<IConnection> SetAsync<TValue>(TValue redisValue);
 
         /// <summary>
-        /// This method forces any generic inheritors to a generic Connection type
-        /// </summary>
-        /// <returns></returns>
-        public IConnection ToConnection();
-
-        /// <summary>
-        /// This method forces any generic inheritors to a hard Connection type
-        /// </summary>
-        /// <typeparam name="TConnection"></typeparam>
-        /// <returns></returns>
-        public TConnection ToConnection<TConnection>() where TConnection : Connection;
-
-        /// <summary>
         /// This method resets the allow admin flag into the instance
         /// </summary>
         /// <param name="flag"></param>
