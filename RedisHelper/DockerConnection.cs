@@ -11,7 +11,7 @@ namespace Fux.Config.RedisHelper
         /// <summary>
         /// This method instantiates the connection from the environment
         /// </summary>
-        public DockerConnection() : base()
+        public DockerConnection()
         {
             // Localize the docker settings construct
             DockerConnectionSettings connectionSettings =
@@ -33,12 +33,12 @@ namespace Fux.Config.RedisHelper
     /// This class bootstraps a Redis connection from Docker secrets with a generic connection settings provider
     /// </summary>
     /// <typeparam name="TSettings"></typeparam>
-    public class DockerConnection<TSettings> : Abstract.Connection where TSettings : DockerConnectionSettings
+    public class DockerConnection<TSettings> : DockerConnection where TSettings : DockerConnectionSettings
     {
         /// <summary>
         /// This method instantiates the connection from the environment
         /// </summary>
-        public DockerConnection() : base()
+        public DockerConnection()
         {
             // Localize the docker settings construct
             TSettings connectionSettings =

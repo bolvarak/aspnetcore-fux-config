@@ -11,7 +11,7 @@ namespace Fux.Config.RedisHelper
         /// <summary>
         /// This method instantiates the connection from the environment
         /// </summary>
-        public EnvironmentConnection() : base()
+        public EnvironmentConnection()
         {
             // Localize the docker settings construct
             EnvironmentConnectionSettings connectionSettings =
@@ -33,13 +33,13 @@ namespace Fux.Config.RedisHelper
     /// This class provides a generic for connections using Environment Variables
     /// </summary>
     /// <typeparam name="TSettings"></typeparam>
-    public class EnvironmentConnection<TSettings> : Abstract.Connection where TSettings : EnvironmentConnectionSettings
+    public class EnvironmentConnection<TSettings> : EnvironmentConnection where TSettings : EnvironmentConnectionSettings
     {
         /// <summary>
         /// This method instantiates the environment connection from a custom settings class
         /// </summary>
         /// <returns></returns>
-        public EnvironmentConnection() : base()
+        public EnvironmentConnection()
         {
             // Localize the docker settings construct
             TSettings connectionSettings =
