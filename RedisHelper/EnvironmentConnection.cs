@@ -15,10 +15,11 @@ namespace Fux.Config.RedisHelper
         {
             // Localize the docker settings construct
             EnvironmentConnectionSettings connectionSettings =
-                Convert.MapWithValueGetter<EnvironmentConnectionSettings, string, EnvironmentVariableAttribute>(
-                    attribute => System.Environment.GetEnvironmentVariable(attribute.Name).ToString());
+                Convert.MapWithValueGetter<EnvironmentConnectionSettings, EnvironmentVariableAttribute>(
+                    (attribute, type, currentValue) => Environment.Get(type, attribute.Name, attribute.AllowEmpty));
             // Setup the instance
             WithAllowAdminFlag(connectionSettings.AllowAdmin)
+                .WithDatabaseAtIndex(connectionSettings.Database)
                 .WithHost(connectionSettings.Host)
                 .WithPassword(connectionSettings.Password)
                 .WithPort(connectionSettings.Port)
@@ -33,7 +34,7 @@ namespace Fux.Config.RedisHelper
     /// This class provides a generic for connections using Environment Variables
     /// </summary>
     /// <typeparam name="TSettings"></typeparam>
-    public class EnvironmentConnection<TSettings> : EnvironmentConnection where TSettings : EnvironmentConnectionSettings
+    public class EnvironmentConnection<TSettings> : EnvironmentConnection where TSettings : EnvironmentConnectionSettings, new()
     {
         /// <summary>
         /// This method instantiates the environment connection from a custom settings class
@@ -43,10 +44,11 @@ namespace Fux.Config.RedisHelper
         {
             // Localize the docker settings construct
             TSettings connectionSettings =
-                Convert.MapWithValueGetter<TSettings, string, EnvironmentVariableAttribute>(
-                    attribute => System.Environment.GetEnvironmentVariable(attribute.Name).ToString());
+                Convert.MapWithValueGetter<TSettings, EnvironmentVariableAttribute>(
+                    (attribute, type, currentValue) => Environment.Get(type, attribute.Name, attribute.AllowEmpty));
             // Setup the instance
             WithAllowAdminFlag(connectionSettings.AllowAdmin)
+                .WithDatabaseAtIndex(connectionSettings.Database)
                 .WithHost(connectionSettings.Host)
                 .WithPassword(connectionSettings.Password)
                 .WithPort(connectionSettings.Port)

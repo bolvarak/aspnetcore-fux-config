@@ -15,6 +15,12 @@ namespace Fux.Config.RedisHelper
         public override bool AllowAdmin { get; set; } = false;
 
         /// <summary>
+        /// This property contains the database to connect to
+        /// </summary>
+        [DockerSecretName("fux_redis_database")]
+        public override int? Database { get; set; } = null;
+
+        /// <summary>
         /// This property contains the host address on which the Redis service listens
         /// </summary>
         [DockerSecretName("fux-redis-host")]

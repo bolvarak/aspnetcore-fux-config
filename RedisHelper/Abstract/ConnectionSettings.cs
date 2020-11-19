@@ -11,6 +11,11 @@ namespace Fux.Config.RedisHelper.Abstract
         public virtual bool AllowAdmin { get; set; } = false;
 
         /// <summary>
+        /// This property contains the database to connect to
+        /// </summary>
+        public virtual int? Database { get; set; } = null;
+
+        /// <summary>
         /// This property contains the host address on which the Redis service listens
         /// </summary>
         public virtual string Host { get; set; } = null;

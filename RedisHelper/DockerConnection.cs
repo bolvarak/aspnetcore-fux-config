@@ -15,10 +15,11 @@ namespace Fux.Config.RedisHelper
         {
             // Localize the docker settings construct
             DockerConnectionSettings connectionSettings =
-                Convert.MapWithValueGetter<DockerConnectionSettings, string, DockerSecretNameAttribute>(attribute =>
+                Convert.MapWithValueGetter<DockerConnectionSettings, DockerSecretNameAttribute>((attribute, type, currentValue) =>
                     Docker.Get(attribute.Name));
             // Setup the instance
             WithAllowAdminFlag(connectionSettings.AllowAdmin)
+                .WithDatabaseAtIndex(connectionSettings.Database)
                 .WithHost(connectionSettings.Host)
                 .WithPassword(connectionSettings.Password)
                 .WithPort(connectionSettings.Port)
@@ -33,7 +34,7 @@ namespace Fux.Config.RedisHelper
     /// This class bootstraps a Redis connection from Docker secrets with a generic connection settings provider
     /// </summary>
     /// <typeparam name="TSettings"></typeparam>
-    public class DockerConnection<TSettings> : DockerConnection where TSettings : DockerConnectionSettings
+    public class DockerConnection<TSettings> : DockerConnection where TSettings : DockerConnectionSettings, new()
     {
         /// <summary>
         /// This method instantiates the connection from the environment
@@ -42,10 +43,11 @@ namespace Fux.Config.RedisHelper
         {
             // Localize the docker settings construct
             TSettings connectionSettings =
-                Convert.MapWithValueGetter<TSettings, string, DockerSecretNameAttribute>(attribute =>
+                Convert.MapWithValueGetter<TSettings, DockerSecretNameAttribute>((attribute, type, currentValue) =>
                     Docker.Get(attribute.Name));
             // Setup the instance
             WithAllowAdminFlag(connectionSettings.AllowAdmin)
+                .WithDatabaseAtIndex(connectionSettings.Database)
                 .WithHost(connectionSettings.Host)
                 .WithPassword(connectionSettings.Password)
                 .WithPort(connectionSettings.Port)

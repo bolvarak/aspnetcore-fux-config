@@ -12,6 +12,12 @@ namespace Fux.Config.RedisHelper
         public override bool AllowAdmin { get; set; } = false;
 
         /// <summary>
+        /// This property contains the database to connect to
+        /// </summary>
+        [EnvironmentVariable("FUX_REDIS_DATABASE")]
+        public override int? Database { get; set; } = null;
+
+        /// <summary>
         /// This property contains the host address on which the Redis service listens
         /// </summary>
         [EnvironmentVariable("FUX_REDIS_HOST")]

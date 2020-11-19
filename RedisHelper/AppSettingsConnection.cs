@@ -32,6 +32,7 @@ namespace Fux.Config.RedisHelper
                 configuration.GetSection(_configurationSectionName).Get<ConnectionSettings>();
             // Setup the instance
             WithAllowAdminFlag(appSettings.AllowAdmin)
+                .WithDatabaseAtIndex(appSettings.Database)
                 .WithHost(appSettings.Host)
                 .WithPort(appSettings.Port)
                 .WithPassword(appSettings.Password)
@@ -44,9 +45,14 @@ namespace Fux.Config.RedisHelper
         /// This method instantiates the connection from the parsed appSettings.json file section
         /// </summary>
         /// <param name="appSettings"></param>
-        public AppSettingsConnection(ConnectionSettings appSettings) : base(appSettings.Host, appSettings.Port,
-            appSettings.Username, appSettings.Password) =>
+        public AppSettingsConnection(ConnectionSettings appSettings) =>
+            // Setup the instance
             WithAllowAdminFlag(appSettings.AllowAdmin)
+                .WithDatabaseAtIndex(appSettings.Database)
+                .WithHost(appSettings.Host)
+                .WithPort(appSettings.Port)
+                .WithPassword(appSettings.Password)
+                .WithSerializerSettings()
                 .WithSocketFlag(appSettings.IsUnixSocket)
                 .WithSslFlag(appSettings.UseSsl);
     }
@@ -61,7 +67,7 @@ namespace Fux.Config.RedisHelper
         /// <summary>
         /// This property contains the configuration section name for the Redis configuration details
         /// </summary>
-        private static string _configurationSectionName = "Tux:Systems:Configuration:Redis";
+        private static string _configurationSectionName = "Fux:Redis";
 
         /// <summary>
         /// This method resets the configuration section name into memory
@@ -82,6 +88,7 @@ namespace Fux.Config.RedisHelper
                 configuration.GetSection(_configurationSectionName).Get<TSettings>();
             // Setup the instance
             WithAllowAdminFlag(appSettings.AllowAdmin)
+                .WithDatabaseAtIndex(appSettings.Database)
                 .WithHost(appSettings.Host)
                 .WithPort(appSettings.Port)
                 .WithPassword(appSettings.Password)
@@ -94,9 +101,13 @@ namespace Fux.Config.RedisHelper
         /// This method instantiates the connection from the parsed appSettings.json file section
         /// </summary>
         /// <param name="appSettings"></param>
-        public AppSettingsConnection(TSettings appSettings) : base(appSettings.Host, appSettings.Port,
-            appSettings.Username, appSettings.Password) =>
+        public AppSettingsConnection(TSettings appSettings) =>
             WithAllowAdminFlag(appSettings.AllowAdmin)
+                .WithDatabaseAtIndex(appSettings.Database)
+                .WithHost(appSettings.Host)
+                .WithPort(appSettings.Port)
+                .WithPassword(appSettings.Password)
+                .WithSerializerSettings()
                 .WithSocketFlag(appSettings.IsUnixSocket)
                 .WithSslFlag(appSettings.UseSsl);
     }

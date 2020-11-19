@@ -14,8 +14,8 @@ namespace Fux.Config
         /// This method sets a new connection structure into memory
         /// </summary>
         /// <param name="connection"></param>
-        public static IConnection Connect(IConnection connection) =>
-            Singleton<IConnection>.Instance(connection);
+        public static Connection Connect(Connection connection) =>
+            Singleton<Connection>.Instance(connection);
 
         /// <summary>
         /// This method sets a new typed connection structure into memory
@@ -23,7 +23,7 @@ namespace Fux.Config
         /// <param name="connection"></param>
         /// <typeparam name="TConnection"></typeparam>
         /// <returns></returns>
-        public static TConnection Connect<TConnection>(TConnection connection) where TConnection : IConnection =>
+        public static TConnection Connect<TConnection>(TConnection connection) where TConnection : Connection, new() =>
             Singleton<TConnection>.Instance(connection);
 
         /// <summary>
@@ -32,8 +32,8 @@ namespace Fux.Config
         /// <typeparam name="TDockerSettings"></typeparam>
         /// <returns></returns>
         public static DockerConnection<TDockerSettings> ConnectFromDocker<TDockerSettings>()
-            where TDockerSettings : DockerConnectionSettings =>
-                Singleton<DockerConnection<TDockerSettings>>.Instance();
+            where TDockerSettings : DockerConnectionSettings, new() =>
+                new DockerConnection<TDockerSettings>();
 
         /// <summary>
         /// This method sets up a Redis connection from Environment Variables using only the configuration POCO
@@ -41,8 +41,8 @@ namespace Fux.Config
         /// <typeparam name="TEnvironmentSettings"></typeparam>
         /// <returns></returns>
         public static EnvironmentConnection<TEnvironmentSettings> ConnectFromEnvironment<TEnvironmentSettings>()
-            where TEnvironmentSettings : EnvironmentConnectionSettings =>
-                Singleton<EnvironmentConnection<TEnvironmentSettings>>.Instance();
+            where TEnvironmentSettings : EnvironmentConnectionSettings, new() =>
+                new EnvironmentConnection<TEnvironmentSettings>();
 
         /// <summary>
         /// This method sets up a Redis connection from Docker Secrets
@@ -56,7 +56,7 @@ namespace Fux.Config
         /// </summary>
         /// <typeparam name="TDockerConnection"></typeparam>
         /// <returns></returns>
-        public static TDockerConnection ConnectWithDockerSecrets<TDockerConnection>() where TDockerConnection : DockerConnection =>
+        public static TDockerConnection ConnectWithDockerSecrets<TDockerConnection>() where TDockerConnection : DockerConnection, new() =>
             Connect<TDockerConnection>(Reflection.Instance<TDockerConnection>());
 
         /// <summary>
@@ -71,23 +71,15 @@ namespace Fux.Config
         /// </summary>
         /// <typeparam name="TEnvironmentConnection"></typeparam>
         /// <returns></returns>
-        public static EnvironmentConnection ConnectWithEnvironmentVariables<TEnvironmentConnection>() where TEnvironmentConnection : EnvironmentConnection =>
+        public static EnvironmentConnection ConnectWithEnvironmentVariables<TEnvironmentConnection>() where TEnvironmentConnection : EnvironmentConnection, new() =>
             Connect<TEnvironmentConnection>(Reflection.Instance<TEnvironmentConnection>());
-
-        /// <summary>
-        /// This method returns a connection structure from memory
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public static dynamic Connection(Type type) =>
-            Singleton.Instance(type);
 
         /// <summary>
         /// This method returns a typed connection structure from memory
         /// </summary>
         /// <typeparam name="TConnection"></typeparam>
         /// /// <returns></returns>
-        public static TConnection Connection<TConnection>() =>
+        public static TConnection Connection<TConnection>() where TConnection: Connection, new() =>
             Singleton<TConnection>.Instance();
     }
 }
