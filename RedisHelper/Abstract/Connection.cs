@@ -393,7 +393,7 @@ namespace Fux.Config.RedisHelper.Abstract
         /// </summary>
         /// <typeparam name="TValue"></typeparam>
         /// <returns></returns>
-        public Task<TValue> GetObjectAsync<TValue>() where TValue: class, new() =>
+        public Task<TValue> GetObjectAsync<TValue>() where TValue : class, new() =>
             Core.Convert.MapWithValueGetterAsync<TValue, RedisKeyAttribute>(
                 async (attribute, type, currentValue) => await GetAsync(type, attribute.Name, attribute.AllowEmpty));
 
@@ -543,13 +543,8 @@ namespace Fux.Config.RedisHelper.Abstract
         /// <returns></returns>
         public Connection WithDatabaseAtIndex(int? index)
         {
-            // Check the value
-            if (index.HasValue)
-            {
-                Console.WriteLine($"DATABASE:\t{index.Value}");
-                // Reset the database index into the instance
-                DatabaseIndex = index.Value;
-            }
+            // Check the value and reset the database index into the instance
+            if (index.HasValue) DatabaseIndex = index.Value;
             // We're done, return the instance
             return this;
         }

@@ -43,7 +43,6 @@ namespace Fux.Config
             if (_secrets.Count == 0)
                 foreach (string s in Directory.GetFiles(_secretsDirectory))
                     _secrets[NormalizeSecretName(s)] = File.ReadAllText(s).Trim();
-            Console.WriteLine($"\n\nSECRETS:\n{Core.Convert.ToString<Dictionary<string, string>>(_secrets)}\n\n\n");
         }
 
         /// <summary>
@@ -56,7 +55,6 @@ namespace Fux.Config
             if (_secrets.Count == 0)
                 foreach (string s in Directory.GetFiles(_secretsDirectory))
                     _secrets[NormalizeSecretName(s)] = (await File.ReadAllTextAsync(s)).Trim();
-            Console.WriteLine($"\n\nSECRETS:\n{Core.Convert.ToString<Dictionary<string, string>>(_secrets)}\n\n\n");
         }
 
         /// <summary>
@@ -306,7 +304,8 @@ namespace Fux.Config
         /// <returns></returns>
         public static void SetObject<TType>() where TType : class, new() =>
             // Generate the instance
-            Core.Convert.MapWithValueGetter<TType, DockerSecretNameAttribute>((attribute, type, value) => {
+            Core.Convert.MapWithValueGetter<TType, DockerSecretNameAttribute>((attribute, type, value) =>
+            {
                 // Set the value into the instance
                 Set(type, attribute.Name, value);
                 // We're done, just return the current value
@@ -366,7 +365,8 @@ namespace Fux.Config
         /// <returns></returns>
         public static Task SetObjectAsync<TType>() where TType : class, new() =>
             // Generate the instance
-            Core.Convert.MapWithValueGetterAsync<TType, DockerSecretNameAttribute>(async (attribute, type, value) => {
+            Core.Convert.MapWithValueGetterAsync<TType, DockerSecretNameAttribute>(async (attribute, type, value) =>
+            {
                 // Set the value into the instance
                 await SetAsync(type, attribute.Name, value);
                 // We're done, just return the current value
